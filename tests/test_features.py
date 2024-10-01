@@ -64,19 +64,14 @@ class TestFeatures(TestCase):
 
     def test_label_encoder_single_value(self):
         data = ['apple', 'banana', 'orange', 'banana']
-        expected_classes = np.array(['apple', 'banana', 'orange'])  # Unique classes
-        expected_encoded = np.array([0, 1, 2, 1])  # Encoded values for the test data
+        expected_classes = np.array(['apple', 'banana', 'orange']) 
+        expected_encoded = np.array([0, 1, 2, 1]) 
 
         encoder = LabelEncoder()
         encoder.fit(data)
 
-        # Check the classes_ attribute
         self.assertTrue((encoder.classes_ == expected_classes).all(), "Classes do not match expected values.")
-
-        # Transform the categories
         result_encoded = encoder.transform(data)
-
-        # Validate the encoding
         self.assertTrue((np.array(result_encoded) == expected_encoded).all(),
                         "Encoding does not match expected values. Expect {}. Got: {}".format(expected_encoded, result_encoded))
 

@@ -62,7 +62,7 @@ class TestFeatures(TestCase):
         result = scaler.transform([[2., 2.]]) 
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
-    def test_label_encoder_different_categories():
+    def test_label_encoder_different_categories(self):
         # Sample categorical data with different categories
         categories = ['apple', 'banana', 'orange', 'apple', 'orange', 'banana', 'kiwi']
         expected_classes = np.array(['apple', 'banana', 'kiwi', 'orange'])  # Sorted unique classes

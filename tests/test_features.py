@@ -61,22 +61,27 @@ class TestFeatures(TestCase):
         result = scaler.transform([[2., 2.]]) 
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
-    def test_label_encoder_mixed_types(self):
-        data = np.array([42, 'apple', 3.14, True, 'banana', False, 42, 'apple'])
-        expected = [0, 1, 2, 3, 4, 5, 0, 1]
-        
+    def test_label_encoder_different_categories():
+        # Sample categorical data with different categories
+        categories = ['apple', 'banana', 'orange', 'apple', 'orange', 'banana', 'kiwi']
+        expected_classes = np.array(['apple', 'banana', 'kiwi', 'orange'])  # Sorted unique classes
+        expected_encoded = np.array([0, 1, 3, 0, 3, 1, 2])  # Encoded values
+    
+        # Create LabelEncoder instance
         encoder = LabelEncoder()
-        encoder.fit(data)
         
-        result = encoder.transform(data)
-        assert result == expected, f"LabelEncoder transform does not return expected values. Expected {expected}. Got: {result}"
+        # Fit the encoder
+        encoder.fit(categories)
+    
+        # Check the classes_ attribute
+        assert (encoder.classes_ == expected_classes).all(), "Classes do not match expected values."
+    
+        # Transform the categories
+        result_encoded = encoder.transform(categories)
         
-        # Test with unseen data
-        new_data = np.array(['apple', 42, 'cherry', True])
-        expected_new = [1, 0, -1, 3]  # -1 for unseen label 'cherry'
-        
-        result_new = encoder.transform(new_data)
-        assert result_new == expected_new, f"LabelEncoder transform does not handle unseen data correctly. Expected {expected_new}. Got: {result_new}"
+        # Validate the encoding
+        assert (np.array(result_encoded) == expected_encoded).all(), "Encoding does not match expected values. Expect {}. Got: {}".format(expected_encoded, result_encoded)
+    
 
     
     

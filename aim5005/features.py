@@ -43,9 +43,6 @@ class StandardScaler:
         self.std = None
 
     def _check_is_array(self, x: np.ndarray) -> np.ndarray:
-        """
-        Try to convert x to a np.ndarray if it's not a np.ndarray and return. If it can't be cast, raise an error.
-        """
         if not isinstance(x, np.ndarray):
             x = np.array(x)
         
@@ -53,23 +50,18 @@ class StandardScaler:
         return x
 
     def fit(self, x: np.ndarray) -> None:
-        """Compute the mean and standard deviation for each feature."""
         x = self._check_is_array(x)
         self.mean = x.mean(axis=0)
         self.std = x.std(axis=0)
 
     def transform(self, x: np.ndarray) -> list:
-        """
-        Standardize the given vector.
-        """
         x = self._check_is_array(x)
         if self.mean is None or self.std is None:
-            raise RuntimeError("You must fit the scaler before calling transform.")
+            raise RuntimeError("must fit the scaler before calling transform.")
         
         return ((x - self.mean) / self.std).tolist()
 
     def fit_transform(self, x: list) -> np.ndarray:
-        """Fit to data, then transform it."""
         x = self._check_is_array(x)
         self.fit(x)
         return self.transform(x)
@@ -81,9 +73,6 @@ class LabelEncoder:
         self.mapping_ = None
 
     def _check_is_array(self, y: np.ndarray) -> np.ndarray:
-        """
-        Try to convert y to a np.ndarray if it's not a np.ndarray and return. If it can't be cast, raise an error.
-        """
         if not isinstance(y, np.ndarray):
             y = np.array(y)
         
@@ -91,23 +80,18 @@ class LabelEncoder:
         return y
 
     def fit(self, y: np.ndarray) -> None:
-        """Compute the unique classes and their corresponding mappings."""
         y = self._check_is_array(y)
         self.classes_ = np.unique(y)
         self.mapping_ = {label: idx for idx, label in enumerate(self.classes_)}
 
     def transform(self, y: np.ndarray) -> list:
-        """
-        Encode the given labels.
-        """
         y = self._check_is_array(y)
         if self.mapping_ is None:
-            raise RuntimeError("You must fit the encoder before calling transform.")
+            raise RuntimeError("must fit the encoder before calling transform.")
         
         return [self.mapping_[label] for label in y]
 
     def fit_transform(self, y: list) -> np.ndarray:
-        """Fit to data, then transform it."""
         y = self._check_is_array(y)
         self.fit(y)
         return self.transform(y)

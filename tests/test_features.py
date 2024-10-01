@@ -61,7 +61,31 @@ class TestFeatures(TestCase):
         result = scaler.transform([[2., 2.]]) 
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
-    # TODO: Add a test of your own below this line
+    def test_label_encoder_mixed_types(self):
+        # Create a LabelEncoder instance
+        le = LabelEncoder()
+        
+        # Test data with mixed types
+        data = ['a', 'b', 1, 'a', 2, 'b', 1, 2]
+        expected = np.array([0, 1, 2, 0, 3, 1, 2, 3])
+        
+        # Fit the encoder and transform new data
+        le.fit(data)
+        result = le.transform(['b', 1, 'a', 2, 'c'])
+        
+        # Check if the result matches the expected output
+        assert np.array_equal(result, [1, 2, 0, 3, 4]), \
+            f"LabelEncoder transform does not return expected values. " \
+            f"Expected: [1, 2, 0, 3, 4]. Got: {result}"
+        
+        # Check if classes_ attribute is correct
+        assert np.array_equal(le.classes_, ['a', 'b', 1, 2]), \
+            f"LabelEncoder classes_ attribute is incorrect. " \
+            f"Expected: ['a', 'b', 1, 2]. Got: {le.classes_}"
+        
+        print("Label encoder test passed successfully!")
+
+    
     
 if __name__ == '__main__':
     unittest.main()

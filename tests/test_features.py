@@ -61,7 +61,7 @@ class TestFeatures(TestCase):
         result = scaler.transform([[2., 2.]]) 
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
-    def test_label_encoder_mixed_types():
+    def test_label_encoder_mixed_types(self):
     data = np.array([42, 'apple', 3.14, True, 'banana', False, 42, 'apple'])
     expected = [0, 1, 2, 3, 4, 5, 0, 1]
     

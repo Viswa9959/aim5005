@@ -63,12 +63,22 @@ class TestFeatures(TestCase):
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
     def test_label_encoder_single_value(self):
-        data = [[0, 0], [0, 0], [1, 1], [1, 1]]
-        expected = np.array([[3., 3.]])
-        encoder= LabelEncoder()
+        data = ['apple', 'banana', 'orange', 'banana']
+        expected_classes = np.array(['apple', 'banana', 'orange'])  # Unique classes
+        expected_encoded = np.array([0, 1, 2, 1])  # Encoded values for the test data
+
+        encoder = LabelEncoder()
         encoder.fit(data)
-        result = encoder.transform([[2., 2.]]) 
-        assert (result == expected).all(), "encoder transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
+
+        # Check the classes_ attribute
+        self.assertTrue((encoder.classes_ == expected_classes).all(), "Classes do not match expected values.")
+
+        # Transform the categories
+        result_encoded = encoder.transform(data)
+
+        # Validate the encoding
+        self.assertTrue((np.array(result_encoded) == expected_encoded).all(),
+                        "Encoding does not match expected values. Expect {}. Got: {}".format(expected_encoded, result_encoded))
 
 
 

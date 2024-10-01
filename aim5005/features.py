@@ -42,29 +42,29 @@ class StandardScaler:
         self.mean = None
         self.std = None
         
-    def _check_is_array(self, x: Union[List, np.ndarray]) -> np.ndarray:
+    def _check_is_array(self, x: np.ndarray) -> np.ndarray:
         """
         Try to convert x to a np.ndarray if it's not a np.ndarray and return. If it can't be cast raise an error
         """
         if not isinstance(x, np.ndarray):
             x = np.array(x)
             
-        assert isinstance(x, np.ndarray), "Expected the input to be a list"
+        assert isinstance(x, np.ndarray), "Expected the input to be a list or numpy array"
         return x
         
-    def fit(self, x: Union[List, np.ndarray]) -> None:   
+    def fit(self, x: np.ndarray) -> None:   
         x = self._check_is_array(x)
-        self.mean = np.mean(x, axis=0)
-        self.std = np.std(x, axis=0)
+        self.mean = x.mean(axis=0)
+        self.std = x.std(axis=0)
         
-    def transform(self, x: Union[List, np.ndarray]) -> np.ndarray:
+    def transform(self, x: np.ndarray) -> list:
         """
-        Standardize the given vector
+        Standard Scale the given vector
         """
         x = self._check_is_array(x)
-        return (x - self.mean) / self.std
+        return ((x - self.mean) / self.std).tolist()
     
-    def fit_transform(self, x: List) -> np.ndarray:
+    def fit_transform(self, x: list) -> np.ndarray:
         x = self._check_is_array(x)
         self.fit(x)
         return self.transform(x)
@@ -72,37 +72,31 @@ class StandardScaler:
 class LabelEncoder:
     def __init__(self):
         self.classes_ = None
-        self.class_to_index: Dict[Any, int] = {}
+        self.class_dict = None
         
-    def _check_is_array(self, y: Union[List, np.ndarray]) -> np.ndarray:
+    def _check_is_array(self, x: np.ndarray) -> np.ndarray:
         """
-        Try to convert y to a np.ndarray if it's not a np.ndarray and return. If it can't be cast raise an error
+        Try to convert x to a np.ndarray if it's not a np.ndarray and return. If it can't be cast raise an error
         """
-        if not isinstance(y, np.ndarray):
-            y = np.array(y)
+        if not isinstance(x, np.ndarray):
+            x = np.array(x)
             
-        assert isinstance(y, np.ndarray), "Expected the input to be a list"
-        return y
+        assert isinstance(x, np.ndarray), "Expected the input to be a list or numpy array"
+        return x
         
-    def fit(self, y: Union[List, np.ndarray]) -> None:
-        """
-        Fit the LabelEncoder to the given labels
-        """
-        y = self._check_is_array(y)
-        unique_classes = sorted(set(y))
-        self.classes_ = np.array(unique_classes)
-        self.class_to_index = {cls: idx for idx, cls in enumerate(self.classes_)}
+    def fit(self, x: np.ndarray) -> None:   
+        x = self._check_is_array(x)
+        self.classes_ = np.unique(x)
+        self.class_dict = {c: i for i, c in enumerate(self.classes_)}
         
-    def transform(self, y: Union[List, np.ndarray]) -> np.ndarray:
+    def transform(self, x: np.ndarray) -> list:
         """
-        Transform labels to normalized encoding
+        Encode labels with value between 0 and n_classes-1
         """
-        y = self._check_is_array(y)
-        return np.array([self.class_to_index[item] for item in y])
+        x = self._check_is_array(x)
+        return [self.class_dict[item] for item in x]
     
-    def fit_transform(self, y: Union[List, np.ndarray]) -> np.ndarray:
-        """
-        Fit the LabelEncoder and transform the given labels
-        """
-        self.fit(y)
-        return self.transform(y)
+    def fit_transform(self, x: list) -> np.ndarray:
+        x = self._check_is_array(x)
+        self.fit(x)
+        return self.transform(x)
